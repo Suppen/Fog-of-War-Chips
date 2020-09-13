@@ -24,20 +24,12 @@ function onload()
     end
 end
 
--- Stops the saving timer, if it is running
-function stopSaveTimer()
-    if timerIsRunning then
-        Timer.destroy(self.getGUID())
-        timerIsRunning = false
-    end
-end
-
 -- Handler for the object's destroy event
 function onDestroy()
     -- Destroy the linked FoW zone
     destroyFoWZone()
 
-    -- Destroy the timer
+    -- Stop the save timer
     stopSaveTimer()
 end
 
@@ -61,12 +53,9 @@ function initFromSavedData(saved_data)
     else
         fowGuid = fowZone.getGUID()
     end
-
-    -- Start saving the FoW zone's state regularly
-    startSaveTimer()
 end
 
---Makes the setup button
+-- Makes the setup button
 function createSetupButton()
     self.clearButtons()
     self.createButton({
@@ -93,6 +82,29 @@ function buttonClick_setup()
 
     -- Create new buttons over each FoW zone
     createButtonsOnAllFoWObjects()
+end
+
+-- Makes the save button
+function createSaveButton()
+    self.clearButtons()
+    self.createButton({
+        label = "Save",
+        click_function = "buttonClick_save",
+        function_owner = self,
+        position = {0,0.3,0},
+        rotation = {0,180,0},
+        height = 350,
+        width = 800,
+        font_size = 250,
+        color = {0,0,0},
+        font_color = {1,1,1}
+    })
+end
+
+-- Handles clicks on the save button
+function buttonClick_save()
+    saveState()
+    print("FoW state saved")
 end
 
 --Creates selection buttons on FoW zones. Mostly copied from the workshop item "FoW on a tray"
@@ -159,21 +171,26 @@ end
 
 -- Spawns a FoW zone from a JSON string and links it to this object
 function spawnFromJSON(json)
-    spawnObjectJSON({
-        json = json,
-        callback_function = function(obj) linkWithFoWZone(obj.getGUID()) end
-    })
+    -- If created immediately, some timing issue with One World causes other objects to be hidden, even when in a revealed part of the FoW. Compensate by waiting a bit before creating the zone
+    Wait.frames(function()
+        spawnObjectJSON({
+            json = json,
+            callback_function = function(obj) linkWithFoWZone(obj.getGUID()) end
+        })
+    end, 30)
 end
 
 --Links the FoW handler with a FoW zone
 function linkWithFoWZone(guid)
-    -- Remove all buttons this object has created
-    self.clearButtons()
-
-    -- Store the FoW zone's GUID
+    -- Store the zone's GUID
     fowGuid = guid
 
-    -- Start saving the FoW zone's state regularly
+    -- Change the buttons
+    self.clearButtons()
+    createSaveButton()
+
+    -- Save the zone's state and start the save timer
+    saveState()
     startSaveTimer()
 end
 
@@ -185,8 +202,16 @@ function startSaveTimer()
             identifier = self.getGUID(),
             repetitions = 0, -- Infinite
             function_name = "saveState",
-            delay = 3
+            delay = 60
         })
+    end
+end
+
+-- Stops the saving timer, if it is running
+function stopSaveTimer()
+    if timerIsRunning then
+        Timer.destroy(self.getGUID())
+        timerIsRunning = false
     end
 end
 
