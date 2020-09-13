@@ -12,6 +12,14 @@ Thanks to [Fog of War - on a Tray](https://steamcommunity.com/sharedfiles/filede
 This is my first ever Lua script, so it is probably quite improvable, but it works! The script is available on github: https://github.com/Suppen/Fog-of-War-Chips/
 
 
+Known problems
+--------------
+
+* Loading large FoW zones with lots of revealed area is slow.
+* Saving large FoW zones with lots of revealed area is noticeable. The game will hang slightly when it does. You may notice this in intervals of 60 seconds, when the zones autosave
+* Not all objects in the revealed parts of the FoW zone will be revealed when loading the zone. This is due to internal workings in Tabletop Simulator, and cannot be fixed in the script
+
+
 
 Technical details
 -----------------
@@ -22,7 +30,7 @@ The chips store the state of the FoW zones in their own GM notes. When a chip is
 
 Clicking the setup button scans the entire scene for FoW zones, and paints a button over them. Clicking this button links the chip to the zone.
 
-Once a zone has been linked to the chip, a timer starts. Every 3 seconds, the chip gets the FoW zone's data as JSON, and writes it to the chip's GM notes.
+Once a zone has been linked to the chip, a timer starts. Every 60 seconds, the chip gets the FoW zone's data as JSON, and writes it to the chip's GM notes. The zone's state can also be manually saved by pressing the "Save" button on the chip.
 
 If the FoW zone is deleted, the chip will notice, and tell the user. This will also stop the save timer. There is currently no easy way to reset the chip, but it could just be deleted to get rid of it, or it could be copied to recreate the zone.
 
