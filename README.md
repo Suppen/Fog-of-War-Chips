@@ -27,3 +27,9 @@ Once a zone has been linked to the chip, a timer starts. Every 3 seconds, the ch
 If the FoW zone is deleted, the chip will notice, and tell the user. This will also stop the save timer. There is currently no easy way to reset the chip, but it could just be deleted to get rid of it, or it could be copied to recreate the zone.
 
 When the chip is placed in a bag (technically destroyed, so deleting it also works), it also destroys the linked FoW zone. Pulling it out of the bag again runs the init script, which is explained further up.
+
+
+2227796422.json and .png
+------------------------
+
+These are the workshop files. The easy way to install them is to go to https://steamcommunity.com/sharedfiles/filedetails/?id=2227796422 and subscribe. If that for some reason is unavailable, you can take these files and put in `basedir/Tabletop Simulator/Mods/Workshop/`. `basedir` is wherever your system has decided to put Tabletop simulator's save data. On Linux it is in `~/.local/share/`. On windows it is probably somewhere in AppData or whatever it's called
