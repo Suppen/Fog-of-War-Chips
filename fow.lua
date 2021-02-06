@@ -4,10 +4,9 @@ fowGuid = nil
 timerIsRunning = false
 
 -- Handler for the object's load event
-function onload()
+function onload(saved_data)
     -- Check if there are any saved data in the GM notes
     local isSetup = false
-    local saved_data = self.getGMNotes()
     if saved_data ~= "" then
         -- Try to set up the zone from the saved data
         isSetup = pcall(initFromSavedData, saved_data)
@@ -219,10 +218,10 @@ end
 function saveState()
     local fowZone = getObjectFromGUID(fowGuid)
     if fowZone ~= nil then
-        self.setGMNotes(JSON.encode({
+        self.script_state = JSON.encode({
            fowGuid = fowGuid,
            json = fowZone.getJSON()
-        }))
+        })
     else
         print("Could not find FoW zone linked to \"" .. self.getName() .. "\". Was it deleted? If that was intended, please also delete the corresponding FoW token")
         stopSaveTimer()
